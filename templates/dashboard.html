@@ -1,0 +1,63 @@
+<!-- templates/dashboard.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Dashboard</h1>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <h3>Profile Information</h3>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Role:</strong> {{ user.role|capitalize }}</p>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        {% if user.role == 'teacher' %}
+            <div class="card">
+                <h3>Your Classroom</h3>
+                {% if classroom %}
+                    <div class="code-display">
+                        Classroom Code: {{ classroom.code }}
+                        <button onclick="copyCode()" class="btn btn-sm btn-secondary ms-2">Copy</button>
+                    </div>
+                    <h4 class="mt-4">Enrolled Students</h4>
+                    {% if classroom.students %}
+                        <ul class="list-group">
+                            {% for student in classroom.students %}
+                                <li class="list-group-item">{{ student }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No students have joined yet.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="card">
+                <h3>Your Classrooms</h3>
+                {% if joined_classrooms %}
+                    {% for classroom in joined_classrooms %}
+                        <div class="card mb-3">
+                            <p><strong>Teacher:</strong> {{ classroom.teacher }}</p>
+                            <p><strong>Code:</strong> {{ classroom.code }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>You haven't joined any classrooms yet.</p>
+                {% endif %}
+                <a href="{{ url_for('join_classroom') }}" class="btn btn-primary mt-3">Join New Classroom</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function copyCode() {
+    const code = document.querySelector('.code-display').textContent.split(':')[1].trim();
+    navigator.clipboard.writeText(code);
+    alert('Classroom code copied to clipboard!');
+}
+</script>
+{% endblock %}
