@@ -1,0 +1,39 @@
+<!-- templates/classroom.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Classroom: {{ classroom.code }}</h2>
+    <h3>Teacher: {{ classroom.teacher }}</h3>
+
+    <div class="assignments mt-4">
+        <h3>Assignments</h3>
+        {% if classroom.assignments %}
+            {% for assignment in classroom.assignments %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ assignment.title }}</h4>
+                        <h5>Questions:</h5>
+                        <p class="card-text">{{ assignment.questions }}</p>
+                        {% if user.role == 'teacher' %}
+                            <h5>Model Answers:</h5>
+                            <p class="card-text">{{ assignment.model_answers }}</p>
+                        {% else %}
+                            <a href="{{ url_for('submit_assignment', classroom_code=classroom.code, assignment_id=loop.index0) }}" 
+                               class="btn btn-primary">Submit Answer</a>
+                            {% if assignment.submissions and user.username in assignment.submissions %}
+                                <div class="mt-2">
+                                    <strong>Your Grade:</strong> {{ assignment.submissions[user.username].grade }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        <p class="card-text"><small class="text-muted">Added on: {{ assignment.date_added }}</small></p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No assignments yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -22,6 +22,10 @@
                         Classroom Code: {{ classroom.code }}
                         <button onclick="copyCode()" class="btn btn-sm btn-secondary ms-2">Copy</button>
                     </div>
+                    <div class="mt-3">
+                        <a href="{{ url_for('add_assignment', classroom_code=classroom.code) }}" class="btn btn-primary">Add Assignment</a>
+                        <a href="{{ url_for('view_classroom', classroom_code=classroom.code) }}" class="btn btn-info">View Classroom</a>
+                    </div>
                     <h4 class="mt-4">Enrolled Students</h4>
                     {% if classroom.students %}
                         <ul class="list-group">
@@ -42,6 +46,7 @@
                         <div class="card mb-3">
                             <p><strong>Teacher:</strong> {{ classroom.teacher }}</p>
                             <p><strong>Code:</strong> {{ classroom.code }}</p>
+                            <a href="{{ url_for('view_classroom', classroom_code=classroom.code) }}" class="btn btn-info">View Classroom</a>
                         </div>
                     {% endfor %}
                 {% else %}

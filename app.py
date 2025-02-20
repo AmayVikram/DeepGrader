@@ -5,6 +5,7 @@ import os
 from functools import wraps
 import random
 import string
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -55,12 +56,38 @@ def signup():
         
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         
-        user_data = {
-            'username': username,
-            'password': hashed_password,
-            'email': email,
-            'role': role
-        }
+        # Generate classroom code and create classroom for teachers during signup
+        if role == 'teacher':
+            classroom_code = generate_classroom_code()
+            classroom_name = f"{username}'s Classroom"  # Create classroom name
+            
+            # Create the classroom document
+            classroom_data = {
+                'code': classroom_code,
+                'name': classroom_name,
+                'teacher': username,
+                'students': [],
+                'assignments': []
+            }
+            classrooms_collection.insert_one(classroom_data)
+            
+            # Include classroom code in user data for teachers
+            user_data = {
+                'username': username,
+                'password': hashed_password,
+                'email': email,
+                'role': role,
+                'classroom_code': classroom_code,
+                'classroom_name': classroom_name
+            }
+        else:
+            # Regular user data for students
+            user_data = {
+                'username': username,
+                'password': hashed_password,
+                'email': email,
+                'role': role
+            }
         
         users_collection.insert_one(user_data)
         flash('Registration successful! Please login.')
@@ -80,20 +107,6 @@ def login():
             session['username'] = username
             session['role'] = user['role']
             
-            if user['role'] == 'teacher' and not user.get('classroom_code'):
-                classroom_code = generate_classroom_code()
-                
-                users_collection.update_one(
-                    {'username': username},
-                    {'$set': {'classroom_code': classroom_code}}
-                )
-                
-                classrooms_collection.insert_one({
-                    'code': classroom_code,
-                    'teacher': username,
-                    'students': []
-                })
-                
             flash(f'Welcome back, {username}!')
             return redirect(url_for('dashboard'))
         else:
@@ -113,6 +126,7 @@ def dashboard():
             {'students': session['username']}
         ))
         return render_template('dashboard.html', user=user, joined_classrooms=joined_classrooms)
+
 
 @app.route('/join_classroom', methods=['GET', 'POST'])
 @login_required
@@ -142,6 +156,135 @@ def join_classroom():
         return redirect(url_for('dashboard'))
     
     return render_template('join_classroom.html')
+
+
+
+@app.route('/classroom/<classroom_code>')
+@login_required
+def view_classroom(classroom_code):
+    classroom = classrooms_collection.find_one({'code': classroom_code})
+    if not classroom:
+        flash('Classroom not found')
+        return redirect(url_for('dashboard'))
+    
+    # Check if user has access to this classroom
+    if session['role'] == 'student' and session['username'] not in classroom['students']:
+        flash('You do not have access to this classroom')
+        return redirect(url_for('dashboard'))
+    elif session['role'] == 'teacher' and session['username'] != classroom['teacher']:
+        flash('You do not have access to this classroom')
+        return redirect(url_for('dashboard'))
+    
+    return render_template('classroom.html', classroom=classroom, user={'role': session['role']})
+
+@app.route('/classroom/<classroom_code>/add_assignment', methods=['GET', 'POST'])
+@login_required
+def add_assignment(classroom_code):
+    if session['role'] != 'teacher':
+        flash('Only teachers can add assignments')
+        return redirect(url_for('dashboard'))
+    
+    classroom = classrooms_collection.find_one({
+        'code': classroom_code,
+        'teacher': session['username']
+    })
+    
+    if not classroom:
+        flash('Classroom not found')
+        return redirect(url_for('dashboard'))
+    
+    if request.method == 'POST':
+        assignment = {
+            'title': request.form['title'],
+            'questions': request.form['questions'],
+            'model_answers': request.form['model_answers'],
+            'date_added': datetime.now(),
+            'submissions': {}  
+        }
+        
+        classrooms_collection.update_one(
+            {'code': classroom_code},
+            {'$push': {'assignments': assignment}}
+        )
+        
+        flash('Assignment added successfully')
+        return redirect(url_for('view_classroom', classroom_code=classroom_code))
+    
+    return render_template('add_assignment.html')
+
+
+from mira_sdk import MiraClient, Flow
+import os
+import json
+
+
+MIRA_API_KEY = os.getenv("MIRA_API_KEY")
+client = MiraClient(config={"API_KEY": MIRA_API_KEY})
+
+@app.route('/classroom/<classroom_code>/assignment/<int:assignment_id>/submit', methods=['GET', 'POST'])
+@login_required
+def submit_assignment(classroom_code, assignment_id):
+    if session['role'] != 'student':
+        flash('Only students can submit assignments')
+        return redirect(url_for('dashboard'))
+    
+    classroom = classrooms_collection.find_one({'code': classroom_code})
+    if not classroom or session['username'] not in classroom['students']:
+        flash('Access denied')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        assignment = classroom['assignments'][assignment_id]
+    except IndexError:
+        flash('Assignment not found')
+        return redirect(url_for('view_classroom', classroom_code=classroom_code))
+    
+    if request.method == 'POST':
+        student_answer = request.form['answer']
+        
+        # Prepare inputs for Mira API
+        flow = Flow(source="autograder.yaml")
+        input_dict = {
+            "input1": assignment['questions'],
+            "input2": assignment['model_answers'],
+            "input3": student_answer
+        }
+
+        try:
+            # Call Mira API
+            response = client.flow.test(flow, input_dict)
+            grade = json.loads(response)['result']
+            
+            print(response)
+            
+            # Store the submission and grade
+            submission_data = {
+                'answer': student_answer,
+                'grade': grade,
+                'date_submitted': datetime.now()
+            }
+            
+            # Update the assignment with the student's submission
+            update_query = {
+                'code': classroom_code,
+                'assignments.' + str(assignment_id): {'$exists': True}
+            }
+            update_data = {
+                '$set': {
+                    f'assignments.{assignment_id}.submissions.{session["username"]}': submission_data
+                }
+            }
+            classrooms_collection.update_one(update_query, update_data)
+            
+            return render_template('submit_assignment.html', assignment=assignment,  grade=grade)
+            
+        except Exception as e:
+            flash(f'Error during grading: {str(e)}')
+            return render_template('submit_assignment.html', assignment=assignment)
+    
+    return render_template('submit_assignment.html', assignment=assignment)
+
+
 
 @app.route('/logout')
 def logout():

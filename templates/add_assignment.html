@@ -1,0 +1,23 @@
+<!-- templates/add_assignment.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Add New Assignment</h2>
+    <form method="POST">
+        <div class="mb-3">
+            <label for="title" class="form-label">Assignment Title</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        <div class="mb-3">
+            <label for="questions" class="form-label">Questions</label>
+            <textarea class="form-control" id="questions" name="questions" rows="5" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="model_answers" class="form-label">Model Answers</label>
+            <textarea class="form-control" id="model_answers" name="model_answers" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Assignment</button>
+    </form>
+</div>
+{% endblock %}

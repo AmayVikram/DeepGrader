@@ -1,0 +1,32 @@
+<!-- templates/submit_assignment.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Submit Assignment</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3>{{ assignment.title }}</h3>
+            <h4>Questions:</h4>
+            <p>{{ assignment.questions }}</p>
+        </div>
+    </div>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="answer" class="form-label">Your Answer</label>
+            <textarea class="form-control" id="answer" name="answer" rows="10" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit for Grading</button>
+    </form>
+
+    {% if grade %}
+    <div class="mt-4">
+        <h3>Grading Result:</h3>
+        <div class="alert alert-info">
+            {{ grade }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
