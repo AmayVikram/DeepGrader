@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Q&A System</h1>
+        <form id="qaForm">
+            <label for="modelQA">Model Questions & Answers:</label>
+            <textarea id="modelQA" rows="5">Q1: What is AI? A1: AI stands for Artificial Intelligence...</textarea>
+
+            <label for="studentQuestion">Your Question:</label>
+            <textarea id="studentQuestion" rows="3"></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+        
+        <div id="response" class="response-box"></div>
+    </div>
+
+    <script>
+        document.getElementById("qaForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            let modelQA = document.getElementById("modelQA").value.trim();
+            let studentQuestion = document.getElementById("studentQuestion").value.trim();
+
+            if (!studentQuestion) {
+                document.getElementById("response").innerHTML = "<p class='error'>Please enter a question.</p>";
+                return;
+            }
+
+            try {
+                let response = await fetch("/ask", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ modelQA: modelQA, studentQuestion: studentQuestion })
+                });
+
+                let result = await response.json();
+
+                if (response.ok) {
+                    // ✅ Extract and display the actual string response
+                    document.getElementById("response").innerHTML = `<p class='success'><strong>Answer:</strong> ${result.result}</p>`;
+                } else {
+                    document.getElementById("response").innerHTML = `<p class='error'><strong>Error:</strong> ${result.error}</p>`;
+                }
+            } catch (error) {
+                document.getElementById("response").innerHTML = `<p class='error'>Server error. Try again later.</p>`;
+            }
+        });
+    </script>
+
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { width: 50%; margin: auto; padding: 20px; }
+        textarea { width: 100%; padding: 10px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: blue; color: white; border: none; cursor: pointer; }
+        .response-box { margin-top: 20px; padding: 10px; border: 1px solid #ddd; background: #f9f9f9; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</body>
+</html>
