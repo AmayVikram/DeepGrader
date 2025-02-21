@@ -385,6 +385,65 @@ def view_submission(classroom_code, assignment_id):
         flash('Assignment not found')
         return redirect(url_for('view_classroom', classroom_code=classroom_code))
 
+@app.route('/classroom/<classroom_code>/assignment/<int:assignment_id>/submissions')
+@login_required
+def view_all_submissions(classroom_code, assignment_id):
+    if session['role'] != 'teacher':
+        flash('Access denied')
+        return redirect(url_for('dashboard'))
+    
+    classroom = classrooms_collection.find_one({
+        'code': classroom_code,
+        'teacher': session['username']
+    })
+    
+    if not classroom:
+        flash('Classroom not found')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        assignment = classroom['assignments'][assignment_id]
+        return render_template('view_all_submissions.html', 
+                             classroom=classroom,
+                             assignment=assignment,
+                             assignment_id=assignment_id)
+    except IndexError:
+        flash('Assignment not found')
+        return redirect(url_for('view_classroom', classroom_code=classroom_code))
+
+@app.route('/classroom/<classroom_code>/assignment/<int:assignment_id>/submission/<student_username>')
+@login_required
+def view_student_submission(classroom_code, assignment_id, student_username):
+    if session['role'] != 'teacher':
+        flash('Access denied')
+        return redirect(url_for('dashboard'))
+    
+    classroom = classrooms_collection.find_one({
+        'code': classroom_code,
+        'teacher': session['username']
+    })
+    
+    if not classroom:
+        flash('Classroom not found')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        assignment = classroom['assignments'][assignment_id]
+        if student_username not in assignment['submissions']:
+            flash('Submission not found')
+            return redirect(url_for('view_all_submissions', 
+                                  classroom_code=classroom_code, 
+                                  assignment_id=assignment_id))
+        
+        submission = assignment['submissions'][student_username]
+        return render_template('view_submission.html', 
+                             assignment=assignment,
+                             submission=submission)
+    except IndexError:
+        flash('Assignment not found')
+        return redirect(url_for('view_classroom', classroom_code=classroom_code))
+
+
 
 
 

@@ -18,6 +18,10 @@
                         {% if user.role == 'teacher' %}
                             <h5>Model Answers:</h5>
                             <p class="card-text">{{ assignment.model_answers }}</p>
+                            <div class="mt-3">
+                                <a href="{{ url_for('view_all_submissions', classroom_code=classroom.code, assignment_id=loop.index0) }}" 
+                                   class="btn btn-info">View All Submissions</a>
+                            </div>
                         {% else %}
                             {% if assignment.submissions and user.username in assignment.submissions %}
                                 <a href="{{ url_for('view_submission', classroom_code=classroom.code, assignment_id=loop.index0) }}" 

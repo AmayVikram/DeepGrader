@@ -1,0 +1,56 @@
+<!-- templates/view_all_submissions.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Assignment Submissions</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3>{{ assignment.title }}</h3>
+            <h4>Questions:</h4>
+            <p>{{ assignment.questions }}</p>
+            <h4>Model Answers:</h4>
+            <p>{{ assignment.model_answers }}</p>
+        </div>
+    </div>
+
+    <div class="submissions mt-4">
+        <h3>Student Submissions</h3>
+        {% if assignment.submissions %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Submission Date</th>
+                            <th>Grade</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for username, submission in assignment.submissions.items() %}
+                            <tr>
+                                <td>{{ username }}</td>
+                                <td>{{ submission.date_submitted.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                <td>
+                                    {% set total = submission.grade.split('Total Marks:')[1].strip() %}
+                                    {{ total }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('view_student_submission', 
+                                                       classroom_code=classroom.code, 
+                                                       assignment_id=assignment_id, 
+                                                       student_username=username) }}" 
+                                       class="btn btn-sm btn-info">View Details</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No submissions yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
