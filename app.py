@@ -239,6 +239,14 @@ def submit_assignment(classroom_code, assignment_id):
         flash('Assignment not found')
         return redirect(url_for('view_classroom', classroom_code=classroom_code))
     
+    # Check if student has already submitted
+    if 'submissions' in assignment and session['username'] in assignment['submissions']:
+        submission = assignment['submissions'][session['username']]
+        return render_template('submit_assignment.html', 
+                             assignment=assignment,
+                             submitted_answer=submission['answer'],
+                             grade=submission['grade'])
+    
     if request.method == 'POST':
         student_answer = request.form['answer']
         
@@ -253,9 +261,7 @@ def submit_assignment(classroom_code, assignment_id):
         try:
             # Call Mira API
             response = client.flow.test(flow, input_dict)
-            grade = json.loads(response)['result']
-            
-            print(response)
+            grade = response['result']
             
             # Store the submission and grade
             submission_data = {
@@ -276,13 +282,46 @@ def submit_assignment(classroom_code, assignment_id):
             }
             classrooms_collection.update_one(update_query, update_data)
             
-            return render_template('submit_assignment.html', assignment=assignment,  grade=grade)
+            return render_template('submit_assignment.html', 
+                                 assignment=assignment,
+                                 submitted_answer=student_answer,
+                                 grade=grade)
             
         except Exception as e:
+            print("Error details:", str(e))
             flash(f'Error during grading: {str(e)}')
-            return render_template('submit_assignment.html', assignment=assignment)
+            return render_template('submit_assignment.html', 
+                                 assignment=assignment)
     
     return render_template('submit_assignment.html', assignment=assignment)
+
+@app.route('/classroom/<classroom_code>/assignment/<int:assignment_id>/view')
+@login_required
+def view_submission(classroom_code, assignment_id):
+    if session['role'] != 'student':
+        flash('Access denied')
+        return redirect(url_for('dashboard'))
+    
+    classroom = classrooms_collection.find_one({'code': classroom_code})
+    if not classroom or session['username'] not in classroom['students']:
+        flash('Access denied')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        assignment = classroom['assignments'][assignment_id]
+        if 'submissions' not in assignment or session['username'] not in assignment['submissions']:
+            flash('No submission found')
+            return redirect(url_for('view_classroom', classroom_code=classroom_code))
+        
+        submission = assignment['submissions'][session['username']]
+        return render_template('view_submission.html', 
+                             assignment=assignment,
+                             submission=submission)
+    
+    except IndexError:
+        flash('Assignment not found')
+        return redirect(url_for('view_classroom', classroom_code=classroom_code))
+
 
 
 

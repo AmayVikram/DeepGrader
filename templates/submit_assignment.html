@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container">
-    <h2>Submit Assignment</h2>
+    <h2>Assignment</h2>
     <div class="card mb-4">
         <div class="card-body">
             <h3>{{ assignment.title }}</h3>
@@ -12,21 +12,58 @@
         </div>
     </div>
 
-    <form method="POST">
-        <div class="mb-3">
-            <label for="answer" class="form-label">Your Answer</label>
-            <textarea class="form-control" id="answer" name="answer" rows="10" required></textarea>
+    {% if submitted_answer %}
+        <div class="mt-4">
+            <h3>Your Submission:</h3>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p>{{ submitted_answer }}</p>
+                </div>
+            </div>
+            <div class="alert alert-info">
+                <table class="grading-table">
+                    {% for question in grade.split('\n\n') %}
+                        {% if question.startswith('Q') %}
+                            <tr>
+                                <td class="label">{{ question.split(':')[0] }}:</td>
+                                <td>Marks allotted: {{ question.split('Marks allotted:')[1].split('Explanation:')[0] }}</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Explanation:</td>
+                                <td>{{ question.split('Explanation:')[1] }}</td>
+                            </tr>
+                        {% elif question.startswith('Total') %}
+                            <tr>
+                                <td class="label">Total Marks:</td>
+                                <td>{{ question.split('Total Marks:')[1] }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit for Grading</button>
-    </form>
-
-    {% if grade %}
-    <div class="mt-4">
-        <h3>Grading Result:</h3>
-        <div class="alert alert-info">
-            {{ grade }}
-        </div>
-    </div>
+    {% else %}
+        <form method="POST">
+            <div class="mb-3">
+                <label for="answer" class="form-label">Your Answer</label>
+                <textarea class="form-control" id="answer" name="answer" rows="10" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit for Grading</button>
+        </form>
     {% endif %}
 </div>
+
+<style>
+.grading-table {
+    width: 100%;
+}
+.grading-table td.label {
+    width: 120px;
+    vertical-align: top;
+    font-weight: bold;
+}
+.grading-table td {
+    padding: 5px;
+}
+</style>
 {% endblock %}

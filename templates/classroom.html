@@ -19,15 +19,14 @@
                             <h5>Model Answers:</h5>
                             <p class="card-text">{{ assignment.model_answers }}</p>
                         {% else %}
-                            <a href="{{ url_for('submit_assignment', classroom_code=classroom.code, assignment_id=loop.index0) }}" 
-                               class="btn btn-primary">Submit Answer</a>
                             {% if assignment.submissions and user.username in assignment.submissions %}
-                                <div class="mt-2">
-                                    <strong>Your Grade:</strong> {{ assignment.submissions[user.username].grade }}
-                                </div>
+                                <a href="{{ url_for('view_submission', classroom_code=classroom.code, assignment_id=loop.index0) }}" 
+                                   class="btn btn-info">View Submission</a>
+                            {% else %}
+                                <a href="{{ url_for('submit_assignment', classroom_code=classroom.code, assignment_id=loop.index0) }}" 
+                                   class="btn btn-primary">Submit Answer</a>
                             {% endif %}
                         {% endif %}
-                        <p class="card-text"><small class="text-muted">Added on: {{ assignment.date_added }}</small></p>
                     </div>
                 </div>
             {% endfor %}

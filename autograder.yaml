@@ -13,14 +13,17 @@ metadata:
 inputs:
   input1:                                              # First input parameter
     type: string                                       # Currently only String format
-    description: "Model Questions and Answers on which we Grade the Submissions"
+    description: "Question of the Assignment along with the marks to be given"
     required: true
     example: "Example value for input1"
   input2:                                              # Second input parameter
     type: string
-    description: "Actual answers given by students"
+    description: "Model answers of the assignment"
     required: true
     example: "Example value for input2"
+  input3:
+    type: string
+    description: "Actual answer submitted by the students for the assignment"
 
 # LLM configuration
 model:
@@ -33,7 +36,8 @@ model:
 prompt: |
   You are an expert grading assistant. Your task is to evaluate student answers based on how closely they match the model answers. Here are the inputs:
 
-  1. **{input1}**: A set of questions along with their model answers and the maximum marks for each question.  
+  1. **{input1}**: A set of questions along with the maximum marks for each question.  
+  2  **{input2}**: Model answers for the questions of input 1
   2. **{input2}**: A set of answers provided by a student for the same questions.
 
   Your task is:  
@@ -53,10 +57,14 @@ prompt: |
 
   Example:  
   Input 1:  
-  Q1: What is AI? (Model Answer: AI stands for Artificial Intelligence. It is the simulation of human intelligence in machines. Max Marks: 5)  
-  Q2: What are the applications of AI? (Model Answer: AI is used in healthcare, autonomous vehicles, and virtual assistants. Max Marks: 10)  
+  Q1: What is AI? ( Max Marks: 5)  
+  Q2: What are the applications of AI? ( Max Marks: 10)  
+  
+  Input 2:
+  Q1: AI stands for Artificial Intelligence. It is the simulation of human intelligence in machines.
+  Q2: AI is used in healthcare, autonomous vehicles, and virtual assistants.
 
-  Input 2:  
+  Input 3:  
   Q1: AI is Artificial Intelligence. It makes machines smart.  
   Q2: AI is used in cars and phones.  
 
@@ -72,6 +80,7 @@ prompt: |
   Now, evaluate the following:  
   {input1}  
   {input2}  
+  {input3}
 
   
 

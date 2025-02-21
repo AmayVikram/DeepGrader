@@ -1,0 +1,60 @@
+<!-- templates/view_submission.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Assignment Submission</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3>{{ assignment.title }}</h3>
+            <h4>Questions:</h4>
+            <p>{{ assignment.questions }}</p>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h3>Your Submission:</h3>
+        <div class="card mb-3">
+            <div class="card-body">
+                <p>{{ submission.answer }}</p>
+            </div>
+        </div>
+        <div class="alert alert-info">
+            <table class="grading-table">
+                {% for question in submission.grade.split('\n\n') %}
+                    {% if question.startswith('Q') %}
+                        <tr>
+                            <td class="label">{{ question.split(':')[0] }}:</td>
+                            <td>Marks allotted: {{ question.split('Marks allotted:')[1].split('Explanation:')[0] }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Explanation:</td>
+                            <td>{{ question.split('Explanation:')[1] }}</td>
+                        </tr>
+                    {% elif question.startswith('Total') %}
+                        <tr>
+                            <td class="label">Total Marks:</td>
+                            <td>{{ question.split('Total Marks:')[1] }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+        <small class="text-muted">Submitted on: {{ submission.date_submitted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+    </div>
+</div>
+
+<style>
+.grading-table {
+    width: 100%;
+}
+.grading-table td.label {
+    width: 120px;
+    vertical-align: top;
+    font-weight: bold;
+}
+.grading-table td {
+    padding: 5px;
+}
+</style>
+{% endblock %}
