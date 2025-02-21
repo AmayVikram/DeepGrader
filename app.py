@@ -177,6 +177,19 @@ def view_classroom(classroom_code):
     
     return render_template('classroom.html', classroom=classroom, user={'role': session['role']})
 
+import fitz  # PyMuPDF for PDF processing
+
+def extract_text_from_pdf(pdf_file):
+    try:
+        doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
+        text = ""
+        for page in doc:
+            text += page.get_text()
+        return text.strip()
+    except Exception as e:
+        print(f"Error extracting text from PDF: {str(e)}")
+        return None
+
 @app.route('/classroom/<classroom_code>/add_assignment', methods=['GET', 'POST'])
 @login_required
 def add_assignment(classroom_code):
@@ -194,12 +207,36 @@ def add_assignment(classroom_code):
         return redirect(url_for('dashboard'))
     
     if request.method == 'POST':
+        title = request.form['title']
+        questions_type = request.form['questions_type']
+        answers_type = request.form['answers_type']
+        
+        # Handle questions
+        if questions_type == 'text':
+            questions = request.form['questions_text']
+        else:
+            questions_pdf = request.files['questions_pdf']
+            questions = extract_text_from_pdf(questions_pdf)
+            if not questions:
+                flash('Error extracting text from questions PDF')
+                return redirect(url_for('add_assignment', classroom_code=classroom_code))
+        
+        # Handle model answers
+        if answers_type == 'text':
+            model_answers = request.form['answers_text']
+        else:
+            answers_pdf = request.files['answers_pdf']
+            model_answers = extract_text_from_pdf(answers_pdf)
+            if not model_answers:
+                flash('Error extracting text from answers PDF')
+                return redirect(url_for('add_assignment', classroom_code=classroom_code))
+
         assignment = {
-            'title': request.form['title'],
-            'questions': request.form['questions'],
-            'model_answers': request.form['model_answers'],
+            'title': title,
+            'questions': questions,
+            'model_answers': model_answers,
             'date_added': datetime.now(),
-            'submissions': {}  
+            'submissions': {}
         }
         
         classrooms_collection.update_one(
@@ -212,7 +249,6 @@ def add_assignment(classroom_code):
     
     return render_template('add_assignment.html')
 
-
 from mira_sdk import MiraClient, Flow
 import os
 import json
@@ -220,6 +256,8 @@ import json
 
 MIRA_API_KEY = os.getenv("MIRA_API_KEY")
 client = MiraClient(config={"API_KEY": MIRA_API_KEY})
+
+
 
 @app.route('/classroom/<classroom_code>/assignment/<int:assignment_id>/submit', methods=['GET', 'POST'])
 @login_required
@@ -248,24 +286,48 @@ def submit_assignment(classroom_code, assignment_id):
                              grade=submission['grade'])
     
     if request.method == 'POST':
-        student_answer = request.form['answer']
+        answer_type = request.form['answer_type']
         
-        # Prepare inputs for Mira API
-        flow = Flow(source="autograder.yaml")
-        input_dict = {
-            "input1": assignment['questions'],
-            "input2": assignment['model_answers'],
-            "input3": student_answer
-        }
-
         try:
+            # Handle student answer
+            if answer_type == 'text':
+                student_answer = request.form['answer_text']
+            else:
+                answer_pdf = request.files['answer_pdf']
+                if not answer_pdf:
+                    flash('No PDF file uploaded')
+                    return render_template('submit_assignment.html', assignment=assignment)
+                
+                student_answer = extract_text_from_pdf(answer_pdf)
+                if not student_answer:
+                    flash('Error extracting text from PDF')
+                    return render_template('submit_assignment.html', assignment=assignment)
+                
+                # Clean up the extracted text
+                student_answer = student_answer.strip().replace('\n', ' ').replace('\r', '')
+            
+            print("Student Answer:", student_answer)  # Debug print
+            
+            # Prepare inputs for Mira API
+            flow = Flow(source="autograder.yaml")
+            input_dict = {
+                "input1": assignment['questions'],
+                "input2": assignment['model_answers'],
+                "input3": student_answer
+            }
+            
+            print("API Input:", input_dict)  # Debug print
+
             # Call Mira API
             response = client.flow.test(flow, input_dict)
             grade = response['result']
             
+            print("API Response:", grade)  # Debug print
+            
             # Store the submission and grade
             submission_data = {
                 'answer': student_answer,
+                'answer_type': answer_type,
                 'grade': grade,
                 'date_submitted': datetime.now()
             }
@@ -295,6 +357,7 @@ def submit_assignment(classroom_code, assignment_id):
     
     return render_template('submit_assignment.html', assignment=assignment)
 
+
 @app.route('/classroom/<classroom_code>/assignment/<int:assignment_id>/view')
 @login_required
 def view_submission(classroom_code, assignment_id):
@@ -321,6 +384,7 @@ def view_submission(classroom_code, assignment_id):
     except IndexError:
         flash('Assignment not found')
         return redirect(url_for('view_classroom', classroom_code=classroom_code))
+
 
 
 

@@ -43,13 +43,56 @@
             </div>
         </div>
     {% else %}
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="answer" class="form-label">Your Answer</label>
-                <textarea class="form-control" id="answer" name="answer" rows="10" required></textarea>
+                <label class="form-label">Submit Your Answer</label>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="answer_type" id="text_answer" value="text" checked>
+                    <label class="form-check-label" for="text_answer">
+                        Text Submission
+                    </label>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="answer_type" id="pdf_answer" value="pdf">
+                    <label class="form-check-label" for="pdf_answer">
+                        PDF Submission
+                    </label>
+                </div>
+
+                <div id="text_input_div">
+                    <textarea class="form-control" id="answer_text" name="answer_text" rows="10"></textarea>
+                </div>
+
+                <div id="pdf_input_div" style="display: none;">
+                    <input type="file" class="form-control" id="answer_pdf" name="answer_pdf" accept=".pdf">
+                    <small class="text-muted">Supported format: PDF</small>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit for Grading</button>
         </form>
+
+        <script>
+            document.querySelectorAll('input[name="answer_type"]').forEach((elem) => {
+                elem.addEventListener("change", function(event) {
+                    const textDiv = document.getElementById("text_input_div");
+                    const pdfDiv = document.getElementById("pdf_input_div");
+                    const textInput = document.getElementById("answer_text");
+                    const pdfInput = document.getElementById("answer_pdf");
+
+                    if (event.target.value === "text") {
+                        textDiv.style.display = "block";
+                        pdfDiv.style.display = "none";
+                        textInput.required = true;
+                        pdfInput.required = false;
+                    } else {
+                        textDiv.style.display = "none";
+                        pdfDiv.style.display = "block";
+                        textInput.required = false;
+                        pdfInput.required = true;
+                    }
+                });
+            });
+        </script>
     {% endif %}
 </div>
 
