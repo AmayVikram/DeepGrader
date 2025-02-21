@@ -178,7 +178,7 @@ def view_classroom(classroom_code):
         flash('You do not have access to this classroom')
         return redirect(url_for('dashboard'))
     
-    return render_template('classroom.html', classroom=classroom, user={'role': session['role']})
+    return render_template('classroom.html', classroom=classroom, user={'role': session['role'],'username':session['username']})
 
 import fitz  # PyMuPDF for PDF processing
 
@@ -383,7 +383,8 @@ def view_submission(classroom_code, assignment_id):
         return render_template('view_submission.html',
                                 
                              assignment=assignment,
-                             submission=submission)
+                             submission=submission,
+                             student_username= session['username'])
     
     except IndexError:
         flash('Assignment not found')
