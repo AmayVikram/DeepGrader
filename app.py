@@ -449,6 +449,35 @@ def view_student_submission(classroom_code, assignment_id, student_username):
         flash('Assignment not found')
         return redirect(url_for('view_classroom', classroom_code=classroom_code))
 
+@app.route('/classroom/<classroom_code>/student/<student_username>/assignments')
+def view_student_assignments(classroom_code, student_username):
+    # Get classroom data from MongoDB
+    classroom = classrooms_collection.find_one({
+        "code": classroom_code
+    })
+    
+    if not classroom:
+        flash("Classroom not found!", "error")
+        return redirect(url_for('dashboard'))
+    
+    # Check if the current user is the teacher of this classroom
+    if session.get('username') != classroom['teacher']:
+        flash("You don't have permission to view this page!", "error")
+        return redirect(url_for('dashboard'))
+    
+    # Check if student exists in the classroom
+    if student_username not in classroom.get('students', []):
+        flash("Student not found in this classroom!", "error")
+        return redirect(url_for('dashboard'))
+    
+    # Count completed assignments
+    completed_count = sum(1 for assignment in classroom.get('assignments', []) 
+                         if assignment.get('submissions', {}).get(student_username))
+    
+    return render_template('view_student_assignments.html',
+                         classroom=classroom,
+                         student_username=student_username,
+                         completed_count=completed_count)
 
 
 
