@@ -2,13 +2,77 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="text-center my-5">
-    <h1>Welcome to Classroom Manager</h1>
-    <p class="lead">A simple way to manage your virtual classrooms</p>
+<style>
+    /* Full-page center alignment */
+    .hero {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Full viewport height */
+        text-align: center;
+    }
+
+    /* Heading Styling */
+    h1 {
+        font-family: 'Lora', serif;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    /* Subtext Styling */
+    p.lead {
+        font-family: 'Poppins', serif;
+        font-size: 1.7rem;
+        color: #555;
+        margin-bottom: 20px;
+        padding-top: 10px;
+        padding-bottom: 0px;
+    }
+
+    /* Button Styling */
+    .btn {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.2rem;
+        padding: 12px 24px;
+        transition: all 0.3s ease-in-out;
+        border-radius: 8px;
+    }
+
+    /* Login Button (Blue by default, transparent on hover) */
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: 2px solid #007bff;
+    }
+    .btn-primary:hover {
+        background-color: transparent;
+        color: #007bff;
+        transform: scale(1.1);
+    }
+
+    /* Sign Up Button (Transparent by default, blue on hover) */
+    .btn-outline-primary {
+        border: 2px solid #007bff;
+        color: #007bff;
+        background-color: transparent;
+    }
+    .btn-outline-primary:hover {
+        background-color: #007bff;
+        color: white;
+        transform: scale(1.1);
+    }
+
+</style>
+
+<div class="hero">
+    <h1>Deep Grader</h1>
+    <p class="lead">Efficient learning begins here.</p>
     {% if not session.username %}
         <div class="mt-4">
-            <a href="/login" class="btn btn-primary btn-lg mx-2">Login</a>
-            <a href="/signup" class="btn btn-outline-primary btn-lg mx-2">Sign Up</a>
+            <a href="/login" class="btn btn-primary btn-lg mx-2 shadow-sm">Login</a>
+            <a href="/signup" class="btn btn-outline-primary btn-lg mx-2 shadow-sm">Sign Up</a>
         </div>
     {% endif %}
 </div>

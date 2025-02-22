@@ -1,26 +1,59 @@
-<!-- templates/login.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <h2 class="text-center mb-4">Login</h2>
-            <form method="POST">
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-control" name="username" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
-            </form>
-            <p class="text-center mt-3">
-                Don't have an account? <a href="/signup">Sign Up</a>
-            </p>
+<style>
+    .login-card {
+        margin-top: 100px;
+         margin-left: auto; /* Center the card horizontally */
+         margin-right: auto; /* Center the card horizontally */
+         width: 400px; /* Set a fixed width for the card */
+         max-width: 90%; /* Ensure it's responsive on smaller screens */
+         padding: 30px; /* Increased padding for more height */
+     }
+ 
+     /* Apply Playfair Display font to the welcome text */
+     .welcome-text {
+         font-family: 'Lora', serif;
+         font-size: 28px; /* Increased for better emphasis */
+         font-weight: 700;
+     }
+ 
+     /* Apply Quicksand font to the Username and Password labels */
+     .custom-label {
+         font-family: 'Quicksand', sans-serif;
+         font-size: 16px;
+         font-weight: 500;
+     }
+ 
+     /* Apply Poppins font to the smaller text below the button */
+     .custom-text {
+         font-family: 'Poppins', sans-serif;
+         font-size: 14px;
+         font-weight: 400;
+     }
+
+ </style>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card login-card">
+                <h2 class="text-center mb-4 welcome-text">Login</h2>
+                <form method="POST">
+                    <div class="mb-3 custom-input">
+                        <label class="form-label custom-label">Username</label>
+                        <input type="text" class="form-control custom-input-field" name="username" required>
+                    </div>
+                    <div class="mb-3 custom-input">
+                        <label class="form-label custom-label">Password</label>
+                        <input type="password" class="form-control custom-input-field" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 custom-button">Login</button>
+                </form>
+                <p class="text-center mt-3 custom-text">
+                    Don't have an account? <a href="/signup" class="custom-link">Sign Up</a>
+                </p>
+            </div>
         </div>
     </div>
-</div>
+
 {% endblock %}

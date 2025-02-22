@@ -2,7 +2,60 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row justify-content-center">
+<style>
+    /* Center the card vertically with some top margin */
+    .signup-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh; /* Use min-height for better responsiveness */
+        padding: 40px 20px; /* Add some padding for smaller screens */
+    }
+
+    /* Card Styling */
+    .card {
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Form Title */
+    .card h2 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+    }
+
+    /* Input & Select Field Styling */
+    .form-label {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+    }
+
+    .form-control, .form-select {
+        font-family: 'Quicksand', sans-serif;
+        font-size: 1rem;
+    }
+
+    /* Button Styling */
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        padding: 12px;
+        font-size: 1.2rem;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Button Hover Effect */
+    .btn-primary:hover {
+        background-color: transparent;
+        color: #007bff;
+        border: 2px solid #007bff;
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="signup-container">
     <div class="col-md-6">
         <div class="card">
             <h2 class="text-center mb-4">Sign Up</h2>
