@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h2 style="text-align: center; margin-bottom: 20px;">Student Assignment Overview</h2>
+<div class="container student-assignment-container">
+    <h2 style="text-align: center; margin-bottom: 20px;color:#f8f9fa;font-family: Poppins;">Student Assignment Overview</h2>
     
     <div class="card mb-4">
         <div class="card-body">
@@ -20,19 +20,23 @@
             {% for assignment in classroom.assignments %}
                 <div class="card mb-3">
                     <div class="card-body">
-                        
-                        
                         <!-- Assignment Status with View Details Button -->
                         <div class="status-badge mb-3 d-flex justify-content-between align-items-center">
-                            <div>
+                            <div class="badge-container">
                                 {% if assignment.submissions and student_username in assignment.submissions %}
-                                    <span class="badge bg-success">Completed</span>
+                                    <div class="badge-wrapper">
+                                        <span class="badge bg-success">Completed</span>
+                                    </div>
                                     {% set submission = assignment.submissions[student_username] %}
-                                    <span class="badge bg-info">
-                                        Grade: {{ submission.grade.split('Total Marks:')[1].strip() }}
-                                    </span>
+                                    <div class="badge-wrapper">
+                                        <span class="badge bg-info " style="background-color: rgb(0,94,194) !important;">
+                                            Grade: {{ submission.grade.split('Total Marks:')[1].strip() }}
+                                        </span>
+                                    </div>
                                 {% else %}
-                                    <span class="badge bg-warning">Pending</span>
+                                    <div class="badge-wrapper">
+                                        <span class="badge bg-warning">Pending</span>
+                                    </div>
                                 {% endif %}
                             </div>
                             <h4 class="card-title" style="text-align: center; font-size: 1.5em;">{{ assignment.title }}</h4>
@@ -103,8 +107,6 @@
 </div>
 
 <style>
-/* Your existing styles remain the same */
-
 .d-flex {
     display: flex;
 }
@@ -121,23 +123,35 @@
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
 }
-.status-badge .badge {
-    font-size: 1.2em;  /* Increased from 1em */
-    padding: 10px 20px;  /* Increased from 8px 15px */
-    margin-right: 10px;
-    font-weight: 500;
+
+.badge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-/* Specific styling for the grade badge */
-.badge.bg-info {
-    font-size: 1.1em;  /* Slightly larger than status badge */
-    padding: 10px 20px;
-    font-weight: 600;  /* Makes the grade slightly bolder */
+.badge-wrapper {
+    margin-bottom: 5px;
 }
 
-/* Optional: Add some shadow for better visibility */
 .badge {
+    width: 200px;
+    text-align: center;
+    display: inline-block;
+    font-size: 1.2em;
+    padding: 10px 20px;
+    font-weight: 500;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.badge.bg-info {
+    font-size: 1.1em;
+    font-weight: 600;
+}
+.student-assignment-container{
+    background-color: rgb(0,94,194);
+    padding:2.5%;
+    border-radius: 1%;
 }
 </style>
 

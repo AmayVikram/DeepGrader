@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h2 style="text-align: center;margin-bottom: 10px;">Assignment Submission</h2>
+<div class="container view-submission-container">
+    <h2 style="text-align: center;margin-bottom: 25px;color: #f9f9fa;">Assignment Submission</h2>
     <div class="card mb-4">
         <div class="card-body">
             <h3 style="text-align: center; font-size: 2em;">{{ assignment.title }}</h3>
@@ -16,7 +16,7 @@
     </div>
 
     <div class="mt-4">
-        <h3>{{ student_username }}'s Submission:</h3>
+        <h3 >{{ student_username }}'s Submission:</h3>
         <div class="card mb-3">
             <div class="card-body">
                 {% for answer in submission.answer.split('Q')[1:] %}
@@ -47,7 +47,7 @@
                 {% endfor %}
             </table>
         </div>
-        <small class="text-muted">Submitted on: {{ submission.date_submitted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+        <small class="text-muted" style="color: #f9f8fa !important;">Submitted on: {{ submission.date_submitted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
     </div>
 </div>
 
@@ -71,6 +71,16 @@
 
 .question-block:last-child, .answer-block:last-child {
     border-bottom: none;
+}
+.view-submission-container{
+    background-color: rgb(0,94,194);
+    padding: 2.5%;
+    border-radius: 1%;
+}
+h3{
+    border-bottom: none !important;
+    color: #f9f8fa;
+    font-family: Poppins;
 }
 </style>
 {% endblock %}

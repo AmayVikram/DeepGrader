@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h2>Assignment</h2>
+<div class="container submit-assignment-container">
+    <h2 style="text-align: center; margin-bottom: 25px; color:#f9f8fa;">Assignment</h2>
     <div class="card mb-4">
         <div class="card-body">
             <h3>{{ assignment.title }}</h3>
@@ -19,7 +19,7 @@
 
     {% if submitted_answer %}
     <div class="mt-4">
-        <h3>Your Submission:</h3>
+        <h3 style="font-family: Poppins; color: #f9f8fa;">Your Submission:</h3>
         <div class="card mb-3">
             <div class="card-body">
                 <div class="model-answers-list">
@@ -56,8 +56,8 @@
     {% else %}
         <!-- Form section remains unchanged -->
         <form method="POST" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label class="form-label">Submit Your Answer</label>
+            <div class="mb-3" style="color: #f8f9fa;">
+                <label class="form-label" style="font-size: 1.2em;">Submit Your Answer</label>
                 <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" name="answer_type" id="text_answer" value="text" checked>
                     <label class="form-check-label" for="text_answer">
@@ -78,10 +78,12 @@
 
                 <div id="pdf_input_div" style="display: none;">
                     <input type="file" class="form-control" id="answer_pdf" name="answer_pdf" accept=".pdf">
-                    <small class="text-muted">Supported format: PDF</small>
+                    <small class="text-muted" style="color: #f9f8fa !important; margin-top: 10px;">Supported format: PDF</small>
                 </div>
             </div>
+            <div class="submit-for-grading-button" style="text-align: center;">
             <button type="submit" class="btn btn-primary">Submit for Grading</button>
+        </div>
         </form>
 
         <!-- JavaScript remains unchanged -->
@@ -137,6 +139,14 @@
 }
 .grading-table td {
     padding: 5px;
+}
+.submit-assignment-container{
+    background-color: rgb(0,94,194);
+    border-radius: 1%;
+    padding: 2.5%;
+}
+h3{
+    border-bottom: none !important;
 }
 </style>
 {% endblock %}
