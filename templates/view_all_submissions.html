@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 style="text-align: center; margin-bottom:10px;">Assignment Submissions</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3 style="text-align: center;font-size: 2em;">{{ assignment.title }}</h3>
+            <h4>Questions:</h4>
+            <div class="questions-list">
+                {% for question in assignment.questions.split('Q')[1:] %}
+                    <div class="question-block mb-2">
+                        <p class="card-text"><strong>Q{{ question.strip() }}</strong></p>
+                    </div>
+                {% endfor %}
+            </div>
+            <h4>Model Answers:</h4>
+            <div class="model-answers-list">
+                {% for answer in assignment.model_answers.split('Q')[1:] %}
+                    <div class="answer-block mb-2">
+                        <p class="card-text"><strong>Q{{ answer.strip() }}</strong></p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="submissions mt-4">
+        <h3>Student Submissions</h3>
+        {% if assignment.submissions %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Submission Date</th>
+                            <th>Grade</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for username, submission in assignment.submissions.items() %}
+                            <tr>
+                                <td>{{ username }}</td>
+                                <td>{{ submission.date_submitted.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                <td>
+                                    {% set total = submission.grade.split('Total Marks:')[1].strip() %}
+                                    {{ total }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('view_student_submission', 
+                                                       classroom_code=classroom.code, 
+                                                       assignment_id=assignment_id, 
+                                                       student_username=username) }}" 
+                                       class="btn btn-sm btn-info">View Details</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No submissions yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.question-block, .answer-block {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.question-block:last-child, .answer-block:last-child {
+    border-bottom: none;
+}
+
+.questions-list, .model-answers-list {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.table-responsive {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+</style>
+{% endblock %}

@@ -7,7 +7,10 @@ import random
 import string
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, 
+    static_folder='static',  # Make sure this matches your folder name
+    static_url_path='/static'
+)
 app.secret_key = os.urandom(24)
 
 # MongoDB Connection
@@ -175,7 +178,7 @@ def view_classroom(classroom_code):
         flash('You do not have access to this classroom')
         return redirect(url_for('dashboard'))
     
-    return render_template('classroom.html', classroom=classroom, user={'role': session['role']})
+    return render_template('classroom.html', classroom=classroom, user={'role': session['role'],'username':session['username']})
 
 import fitz  # PyMuPDF for PDF processing
 
@@ -377,13 +380,104 @@ def view_submission(classroom_code, assignment_id):
             return redirect(url_for('view_classroom', classroom_code=classroom_code))
         
         submission = assignment['submissions'][session['username']]
-        return render_template('view_submission.html', 
+        return render_template('view_submission.html',
+                                
                              assignment=assignment,
-                             submission=submission)
+                             submission=submission,
+                             student_username= session['username'])
     
     except IndexError:
         flash('Assignment not found')
         return redirect(url_for('view_classroom', classroom_code=classroom_code))
+
+@app.route('/classroom/<classroom_code>/assignment/<int:assignment_id>/submissions')
+@login_required
+def view_all_submissions(classroom_code, assignment_id):
+    if session['role'] != 'teacher':
+        flash('Access denied')
+        return redirect(url_for('dashboard'))
+    
+    classroom = classrooms_collection.find_one({
+        'code': classroom_code,
+        'teacher': session['username']
+    })
+    
+    if not classroom:
+        flash('Classroom not found')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        assignment = classroom['assignments'][assignment_id]
+        return render_template('view_all_submissions.html', 
+                             classroom=classroom,
+                             assignment=assignment,
+                             assignment_id=assignment_id)
+    except IndexError:
+        flash('Assignment not found')
+        return redirect(url_for('view_classroom', classroom_code=classroom_code))
+
+@app.route('/classroom/<classroom_code>/assignment/<int:assignment_id>/submission/<student_username>')
+@login_required
+def view_student_submission(classroom_code, assignment_id, student_username):
+    if session['role'] != 'teacher':
+        flash('Access denied')
+        return redirect(url_for('dashboard'))
+    
+    classroom = classrooms_collection.find_one({
+        'code': classroom_code,
+        'teacher': session['username']
+    })
+    
+    if not classroom:
+        flash('Classroom not found')
+        return redirect(url_for('dashboard'))
+    
+    try:
+        assignment = classroom['assignments'][assignment_id]
+        if student_username not in assignment['submissions']:
+            flash('Submission not found')
+            return redirect(url_for('view_all_submissions', 
+                                  classroom_code=classroom_code, 
+                                  assignment_id=assignment_id))
+        
+        submission = assignment['submissions'][student_username]
+        return render_template('view_submission.html', 
+                             student_username=student_username,
+                             assignment=assignment,
+                             submission=submission)
+    except IndexError:
+        flash('Assignment not found')
+        return redirect(url_for('view_classroom', classroom_code=classroom_code))
+
+@app.route('/classroom/<classroom_code>/student/<student_username>/assignments')
+def view_student_assignments(classroom_code, student_username):
+    # Get classroom data from MongoDB
+    classroom = classrooms_collection.find_one({
+        "code": classroom_code
+    })
+    
+    if not classroom:
+        flash("Classroom not found!", "error")
+        return redirect(url_for('dashboard'))
+    
+    # Check if the current user is the teacher of this classroom
+    if session.get('username') != classroom['teacher']:
+        flash("You don't have permission to view this page!", "error")
+        return redirect(url_for('dashboard'))
+    
+    # Check if student exists in the classroom
+    if student_username not in classroom.get('students', []):
+        flash("Student not found in this classroom!", "error")
+        return redirect(url_for('dashboard'))
+    
+    # Count completed assignments
+    completed_count = sum(1 for assignment in classroom.get('assignments', []) 
+                         if assignment.get('submissions', {}).get(student_username))
+    
+    return render_template('view_student_assignments.html',
+                         classroom=classroom,
+                         student_username=student_username,
+                         completed_count=completed_count)
 
 
 

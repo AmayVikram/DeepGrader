@@ -1,11 +1,11 @@
-<!-- templates/dashboard.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="mb-4">Dashboard</h1>
-<div class="row">
-    <div class="col-md-4">
-        <div class="card">
+<h1 class="mb-4" style="text-align: center;">Dashboard</h1>
+<div class="dashboard-container">
+    <!-- Profile Card - Now at the top -->
+    <div class="profile-section mb-4">
+        <div class="card profile-card">
             <h3>Profile Information</h3>
             <p><strong>Username:</strong> {{ user.username }}</p>
             <p><strong>Email:</strong> {{ user.email }}</p>
@@ -13,9 +13,10 @@
         </div>
     </div>
     
-    <div class="col-md-8">
+    <!-- Classroom Section -->
+    <div class="classroom-section">
         {% if user.role == 'teacher' %}
-            <div class="card">
+            <div class="card classroom-card">
                 <h3>Your Classroom</h3>
                 {% if classroom %}
                     <div class="code-display">
@@ -28,18 +29,47 @@
                     </div>
                     <h4 class="mt-4">Enrolled Students</h4>
                     {% if classroom.students %}
-                        <ul class="list-group">
-                            {% for student in classroom.students %}
-                                <li class="list-group-item">{{ student }}</li>
-                            {% endfor %}
-                        </ul>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Assignments Done</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in classroom.students %}
+                                        <tr>
+                                            <td>{{ student }}</td>
+                                            <td>
+                                                {% set completed = namespace(count=0) %}
+                                                {% for assignment in classroom.assignments %}
+                                                    {% if assignment.submissions and student in assignment.submissions %}
+                                                        {% set completed.count = completed.count + 1 %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {{ completed.count }}/{{ classroom.assignments|length }}
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('view_student_assignments', 
+                                                                   classroom_code=classroom.code, 
+                                                                   student_username=student) }}" 
+                                                   class="btn btn-sm btn-info">View All Assignments</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     {% else %}
                         <p>No students have joined yet.</p>
                     {% endif %}
                 {% endif %}
             </div>
         {% else %}
-            <div class="card">
+            <!-- Student dashboard remains unchanged -->
+            <div class="card classroom-card">
                 <h3>Your Classrooms</h3>
                 {% if joined_classrooms %}
                     {% for classroom in joined_classrooms %}
@@ -57,6 +87,58 @@
         {% endif %}
     </div>
 </div>
+
+<style>
+.table-responsive {
+    margin-top: 20px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.table-responsive {
+    margin-top: 20px;
+}
+
+.table {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+/* Equal column spacing */
+.table th,
+.table td {
+    width: 33.33%;  /* Divides space equally among 3 columns */
+    text-align: center;  /* Centers the content */
+    vertical-align: middle;  /* Vertically centers content */
+    padding: 15px;  /* Added more padding for better spacing */
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    width: auto;  /* Allows button to maintain its natural width */
+}
+
+/* Optional: Add some styling to make the table more attractive */
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+
+</style>
 
 <script>
 function copyCode() {

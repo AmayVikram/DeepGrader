@@ -1,4 +1,3 @@
-<!-- templates/submit_assignment.html -->
 {% extends "base.html" %}
 
 {% block content %}
@@ -8,41 +7,54 @@
         <div class="card-body">
             <h3>{{ assignment.title }}</h3>
             <h4>Questions:</h4>
-            <p>{{ assignment.questions }}</p>
+            <div class="questions-list">
+                {% for question in assignment.questions.split('Q')[1:] %}
+                    <div class="question-block mb-2">
+                        <p class="card-text"><strong>Q{{ question.strip() }}</strong></p>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
     {% if submitted_answer %}
-        <div class="mt-4">
-            <h3>Your Submission:</h3>
-            <div class="card mb-3">
-                <div class="card-body">
-                    <p>{{ submitted_answer }}</p>
+    <div class="mt-4">
+        <h3>Your Submission:</h3>
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="model-answers-list">
+                    {% for answer in submitted_answer.split('Q')[1:] %}
+                        <div class="answer-block mb-2">
+                            <p class="card-text"><strong>Q{{ answer.strip() }}</strong></p>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
-            <div class="alert alert-info">
-                <table class="grading-table">
-                    {% for question in grade.split('\n\n') %}
-                        {% if question.startswith('Q') %}
-                            <tr>
-                                <td class="label">{{ question.split(':')[0] }}:</td>
-                                <td>Marks allotted: {{ question.split('Marks allotted:')[1].split('Explanation:')[0] }}</td>
-                            </tr>
-                            <tr>
-                                <td class="label">Explanation:</td>
-                                <td>{{ question.split('Explanation:')[1] }}</td>
-                            </tr>
-                        {% elif question.startswith('Total') %}
-                            <tr>
-                                <td class="label">Total Marks:</td>
-                                <td>{{ question.split('Total Marks:')[1] }}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                </table>
-            </div>
         </div>
+        <div class="alert alert-info">
+            <table class="grading-table">
+                {% for question in grade.split('\n\n') %}
+                    {% if question.startswith('Q') %}
+                        <tr>
+                            <td class="label">{{ question.split(':')[0] }}:</td>
+                            <td>Marks allotted: {{ question.split('Marks allotted:')[1].split('Explanation:')[0] }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Explanation:</td>
+                            <td>{{ question.split('Explanation:')[1] }}</td>
+                        </tr>
+                    {% elif question.startswith('Total') %}
+                        <tr>
+                            <td class="label">Total Marks:</td>
+                            <td>{{ question.split('Total Marks:')[1] }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
     {% else %}
+        <!-- Form section remains unchanged -->
         <form method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label class="form-label">Submit Your Answer</label>
@@ -60,7 +72,8 @@
                 </div>
 
                 <div id="text_input_div">
-                    <textarea class="form-control" id="answer_text" name="answer_text" rows="10"></textarea>
+                    <textarea class="form-control" id="answer_text" name="answer_text" rows="10" 
+                              placeholder="Format your answers as:&#10;Q1. Your answer for first question&#10;Q2. Your answer for second question"></textarea>
                 </div>
 
                 <div id="pdf_input_div" style="display: none;">
@@ -71,8 +84,9 @@
             <button type="submit" class="btn btn-primary">Submit for Grading</button>
         </form>
 
+        <!-- JavaScript remains unchanged -->
         <script>
-            document.querySelectorAll('input[name="answer_type"]').forEach((elem) => {
+             document.querySelectorAll('input[name="answer_type"]').forEach((elem) => {
                 elem.addEventListener("change", function(event) {
                     const textDiv = document.getElementById("text_input_div");
                     const pdfDiv = document.getElementById("pdf_input_div");
@@ -97,6 +111,22 @@
 </div>
 
 <style>
+.question-block, .answer-block {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.question-block:last-child, .answer-block:last-child {
+    border-bottom: none;
+}
+
+.questions-list, .model-answers-list {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
 .grading-table {
     width: 100%;
 }
