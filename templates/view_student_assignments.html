@@ -20,7 +20,7 @@
             {% for assignment in classroom.assignments %}
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h4 class="card-title" style="text-align: center; font-size: 1.5em;">{{ assignment.title }}</h4>
+                        
                         
                         <!-- Assignment Status with View Details Button -->
                         <div class="status-badge mb-3 d-flex justify-content-between align-items-center">
@@ -35,6 +35,7 @@
                                     <span class="badge bg-warning">Pending</span>
                                 {% endif %}
                             </div>
+                            <h4 class="card-title" style="text-align: center; font-size: 1.5em;">{{ assignment.title }}</h4>
                             <button class="btn btn-sm btn-secondary" 
                                     onclick="toggleDetails('details-{{ loop.index }}')"
                                     id="btn-{{ loop.index }}">

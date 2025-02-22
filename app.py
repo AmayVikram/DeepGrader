@@ -13,7 +13,7 @@ app = Flask(__name__,
 )
 app.secret_key = os.urandom(24)
 
-# MongoDB Connection
+# MongoDB Connection    
 MONGO_URL = os.getenv("MONGO_URL")
 client = MongoClient(MONGO_URL)
 print("connected to mongo db")
