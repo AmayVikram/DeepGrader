@@ -14,7 +14,9 @@ app = Flask(__name__,
 app.secret_key = os.urandom(24)
 
 # MongoDB Connection
-client = MongoClient('mongodb://localhost:27017/')
+MONGO_URL = os.getenv("MONGO_URL")
+client = MongoClient(MONGO_URL)
+print("connected to mongo db")
 db = client['user_auth_db']
 users_collection = db['users']
 classrooms_collection = db['classrooms']

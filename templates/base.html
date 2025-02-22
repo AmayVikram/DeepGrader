@@ -9,18 +9,25 @@
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
-       <style>
-          body {
-           background-color: white;
-       }
-       </style>
-    
+   <style>
+        /* Custom styles for the container */
+        .custom-container {
+            background-color: #9BD0F9;
+            padding-top:2.5%;
+            padding-bottom: 2.5%;
+        }
+        .custom-nav{
+            /* background-color: rgba(red, green, blue, alpha); */
+            background-color: rgb(44, 63, 159);
+            
+        }
+   </style>
 </head>
 <body>
     
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark custom-nav">
         <div class="container">
-            <a class="navbar-brand" href="/">Classroom Manager</a>
+            <a class="navbar-brand" href="/">Deep Graders</a>
             <div class="navbar-nav ms-auto">
                 {% if session.username %}
                     <a class="nav-link" href="/dashboard">Dashboard</a>
@@ -33,7 +40,7 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container-fluid mt-auto custom-container">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for message in messages %}

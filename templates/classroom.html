@@ -1,19 +1,22 @@
 <!-- templates/classroom.html -->
 {% extends "base.html" %}
 
-{% block content %}
-<div class="container">
-    <h2>Classroom: {{ classroom.name }}</h2>
-    <h3>Teacher: {{ classroom.teacher }}</h3>
 
-    <div class="assignments mt-4">
-        <h3>Assignments</h3>
+
+{% block content %}
+<div class="container classroom-container">
+    <h2 style="text-align: center;">{{ classroom.name }}</h2>
+    <h3 style="color: #eef2f4;">Teacher: {{ classroom.teacher }}</h3>
+
+    <div class="assignments mt-4"> 
+        <h3 style="color: #eef2f4;">Assignments</h3>
         {% if classroom.assignments %}
             {% for assignment in classroom.assignments %}
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h4 class="card-title" style="text-align: center;font-size: 2em;">{{ assignment.title }}</h4>
                         <div class="d-flex justify-content-between align-items-start">
+                        
+
                             <div class="action-buttons">
                                 {% if user.role == 'teacher' %}
                                     <a href="{{ url_for('view_all_submissions', classroom_code=classroom.code, assignment_id=loop.index0) }}" 
@@ -28,6 +31,7 @@
                                     {% endif %}
                                 {% endif %}
                             </div>
+                            <h4 class="card-title" style="text-align: center;font-size: 2em;">{{ assignment.title }}</h4>
                             <button class="btn btn-secondary" onclick="toggleDetails('assignment{{ loop.index }}', this)">
                                 View Details
                             </button>
@@ -61,6 +65,17 @@
 </div>
 
 <style>
+    h3 {
+    border-bottom: none !important;
+}
+.classroom-container{
+    padding:2.5%;
+    font-family: "poppins" ;
+    color: #eef2f4;
+    background-color: rgb(0, 94, 194);
+    border-radius: 1%;
+}
+
 .question-block, .answer-block {
     padding: 10px;
     border-bottom: 1px solid #eee;
@@ -73,6 +88,7 @@
 .action-buttons {
     transition: margin-top 0.3s ease;
 }
+
 </style>
 
 <script>

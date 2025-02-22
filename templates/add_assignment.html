@@ -2,19 +2,27 @@
 
 {% block content %}
 
+<style>
+    .add-assignment{
+        font-family: "poppins";
+        background-color: white;
+        color :black;
+    }
+</style>
 
-<div class="container">
-    <div class="assignment-form-wrapper">
+
+<div class="container ">
+    <div class="assignment-form-wrapper add-assignment">
         <h2 class="assignment-heading">Add New Assignment</h2>
         <form method="POST" enctype="multipart/form-data">
             <!-- Rest of your form remains exactly the same -->
             <div class="mb-3">
-                <label for="title" class="form-label">Assignment Title</label>
-                <input type="text" class="form-control" id="title" name="title" required>
+                <label for="title" class="form-label" style="font-size: 1.2em; font-weight: 500;">Assignment Title</label>
+                <input type="text" class="form-control" id="title" name="title" style="border: 2px solid  rgba(102, 102, 102, 0.451);" required>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Questions</label>
+                <label class="form-label" style="font-size: 1.2em; font-weight: 500;">Questions</label>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="questions_type" id="questions_text" value="text" checked>
                     <label class="form-check-label" for="questions_text">
@@ -28,7 +36,7 @@
                     </label>
                 </div>
                 <div id="questions_text_input" class="mt-2">
-                    <textarea class="form-control" name="questions_text" rows="5"></textarea>
+                    <textarea class="form-control" style="border: 2px solid  rgba(102, 102, 102, 0.451);" placeholder="Format your questions as:&#10;Q1. First question (x marks)&#10;Q2. Second question (y marks)" name="questions_text" rows="5"></textarea>
                 </div>
                 <div id="questions_pdf_input" class="mt-2" style="display: none;">
                     <input type="file" class="form-control" name="questions_pdf" accept=".pdf">
@@ -36,7 +44,7 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Model Answers</label>
+                <label class="form-label" style="font-size: 1.2em; font-weight: 500;">Model Answers</label>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="answers_type" id="answers_text" value="text" checked>
                     <label class="form-check-label" for="answers_text">
@@ -44,13 +52,13 @@
                     </label>
                 </div>
                 <div class="form-check">
-                    <input class="form-check-input" type="radio" name="answers_type" id="answers_pdf" value="pdf">
+                    <input class="form-check-input" type="radio" name="answers_type" id="answers_pdf" value="pdf" >
                     <label class="form-check-label" for="answers_pdf">
                         Upload PDF
                     </label>
                 </div>
                 <div id="answers_text_input" class="mt-2">
-                    <textarea class="form-control" name="answers_text" rows="5"></textarea>
+                    <textarea class="form-control" style="border: 2px solid rgba(102, 102, 102, 0.451);" placeholder="Format your answers as:&#10;Q1. Your answer for first question&#10;Q2. Your answer for second question" name="answers_text" rows="5"></textarea>
                 </div>
                 <div id="answers_pdf_input" class="mt-2" style="display: none;">
                     <input type="file" class="form-control" name="answers_pdf" accept=".pdf">
@@ -58,7 +66,7 @@
             </div>
 
             <div class="text-center">
-                <button type="submit" class="btn btn-primary">Add Assignment</button>
+                <button type="submit" class="btn btn-primary" style="margin-top: 12px;">Add Assignment</button>
             </div>
         </form>
     </div>

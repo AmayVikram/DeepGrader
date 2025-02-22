@@ -164,15 +164,18 @@ h4 {
 .assignment-form-wrapper {
     max-width: 600px;
     margin: 20px auto;
-    padding: 20px;
-    border: 2px solid #ddd;
+    padding: 5%;
+    border: 2px solid #f4f3f0;
     border-radius: 8px;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    
+    
 }
 
 .assignment-heading {
     text-align: center;
     margin-bottom: 30px;
-    color: #333;
+    color:#black;
 }
 
 /* view all submissions */
