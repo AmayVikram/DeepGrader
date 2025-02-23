@@ -13,8 +13,8 @@
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repository-link>
-cd <your-repository-folder>
+git clone https://github.com/AmayVikram/DeepGrader
+cd DeepGrader
 ```
 
 ### 2. Install MongoDB and Set It Up
@@ -22,6 +22,18 @@ cd <your-repository-folder>
 - Download MongoDB from [MongoDB Official Site](https://www.mongodb.com/try/download/community)
 - Install and run the MongoDB service.
 - Ensure MongoDB is running before launching the project.
+
+### 3. Set Up the `.env` File
+
+Create a `.env` file in the project root and add the following environment variables:
+
+```env
+MONGO_URL=<your-mongodb-connection-string>
+MIRA_SDK_API_KEY=<your-mira-sdk-api-key>
+```
+
+- Replace `<your-mongodb-connection-string>` with your actual MongoDB connection string.
+- Replace `<your-mira-sdk-api-key>` with your API key for Mira SDK.
 
 ## How the Website Works
 
