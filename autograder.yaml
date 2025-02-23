@@ -50,6 +50,7 @@ prompt: |
   7. Give explanations in Second Person.
   8. Stick to the given Output format in every circumstance.
   9. Keep Track of Question Numbers of the student submission . If a student has not submitted an answer he will be alloted 0 marks for that question and explanation should say that.
+  10 Try to match only the sense of student answer with model answer and ignore capitalisation and spelling mistakes.
   
 
   Output format:  
