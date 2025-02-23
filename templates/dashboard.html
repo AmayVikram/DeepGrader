@@ -4,21 +4,26 @@
 
 <style>
     .dashboard-container{
-        background-color: rgb(0, 94, 194);
+        background-color: #c0dcf1;
         padding-top: 10px;
         border-radius: 2%;
         padding-top: 5px;
         padding-bottom : 5px;
-         
+        border: solid   rgb(151, 151, 151);
+        border-width: 1px;
         /* padding-left: 10px;
         padding-right: 10px; */
         max-width: 85%;
-
+        font-family: "Atkinson Hyperlegible Mono", serif;
+        font-optical-sizing: auto;
+        font-weight: large;
+        font-style: normal;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     }
     .dash{
         padding-top: 5px;
         padding-bottom: 15px;
-        color: #eef2f4;
+        /* color: #eef2f4; */
     }
     .profile-section {
     padding: 10px;
@@ -26,7 +31,7 @@
     }
 
     .profile-card {
-        background-color: #f5f8f6 !important; /* Changes the card background */
+        background-color: #f5f8f6 !important;
         padding: 15px;
         border-radius: 5px;
     }
@@ -37,7 +42,7 @@
     }
 </style>
 <div class="dashboard-container">
-    <h1 class="mb-auto dash" style="text-align: center;">Dashboard</h1>
+    <h1 class="mb-auto dash" style="text-align: center; font-weight: 750;">Dashboard</h1>
     <!-- Profile Card - Now at the top -->
     <div class="profile-section mb-4">
         <div class="card profile-card">
@@ -51,13 +56,15 @@
     <!-- Classroom Section -->
     <div class="classroom-section">
         {% if user.role == 'teacher' %}
-            <div class="card classroom-card">
+            <div class="card classroom-card" style = "background-color: #f5f8f6;">
                 <h3>Your Classroom</h3>
                 {% if classroom %}
-                    <div class="code-display">
-                        Classroom Code: {{ classroom.code }}
-                        <button onclick="copyCode()" class="btn btn-sm btn-secondary ms-2">Copy</button>
-                    </div>
+                <div class="code-display">
+                    Classroom Code: <span id="classroomCode" style="margin-left: 0%;">{{ classroom.code }}</span>
+                    <button onclick="copyCode()" class="btn btn-sm btn-secondary ms-2">Copy</button>
+                </div>
+  
+                  
                     <div class="mt-3">
                         <a href="{{ url_for('add_assignment', classroom_code=classroom.code) }}" class="btn btn-primary">Add Assignment</a>
                         <a href="{{ url_for('view_classroom', classroom_code=classroom.code) }}" class="btn btn-info">View Classroom</a>
@@ -177,9 +184,18 @@
 
 <script>
 function copyCode() {
-    const code = document.querySelector('.code-display').textContent.split(':')[1].trim();
-    navigator.clipboard.writeText(code);
-    alert('Classroom code copied to clipboard!');
+  // Get only the text content from the dedicated element
+  const codeText = document.getElementById('classroomCode').textContent.trim();
+
+  // Use the Clipboard API to copy the text
+  navigator.clipboard.writeText(codeText)
+    .then(() => {
+      console.log('Code copied successfully!');
+    })
+    .catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
 }
+
 </script>
 {% endblock %}

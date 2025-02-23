@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container view-submission-container">
-    <h2 style="text-align: center;margin-bottom: 25px;color: #f9f9fa;">Assignment Submission</h2>
+    <h2 style="text-align: center;margin-bottom: 25px;">Assignment Submission</h2>
     <div class="card mb-4">
         <div class="card-body">
             <h3 style="text-align: center; font-size: 2em; color: black;">{{ assignment.title }}</h3>
@@ -47,7 +47,7 @@
                 {% endfor %}
             </table>
         </div>
-        <small class="text-muted" style="color: #f9f8fa !important;">Submitted on: {{ submission.date_submitted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+        <small class="text-muted">Submitted on: {{ submission.date_submitted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
     </div>
 </div>
 
@@ -73,14 +73,18 @@
     border-bottom: none;
 }
 .view-submission-container{
-    background-color: rgb(0,94,194);
+    font-family: "Atkinson Hyperlegible Mono", serif !important;
+        font-optical-sizing: auto;
+        font-weight: large;
+        font-style: normal;
+    background-color: #c0dcf1;
     padding: 2.5%;
     border-radius: 1%;
 }
 h3{
     border-bottom: none !important;
-    color: #f9f8fa;
-    font-family: Poppins;
+    /* color: #f9f8fa; */
+    /* font-family: Poppins; */
 }
 </style>
 {% endblock %}
