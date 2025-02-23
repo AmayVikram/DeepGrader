@@ -5,6 +5,10 @@
 <style>
     /* Centering Container */
     .join-class-container {
+        font-family: "Atkinson Hyperlegible Mono", serif !important;
+        font-optical-sizing: auto;
+        font-weight: large;
+        font-style: normal;
         display: flex;
         justify-content: flex-end; /* Moves it towards the right */
         align-items: center;
@@ -23,20 +27,17 @@
 
     /* Heading Font */
     .card h2 {
-        font-family: 'Poppins', serif;
         font-weight: 500;
-        text-transform: uppercase;
+        /* text-transform: uppercase; */
     }
 
     /* Label Styling */
     .form-label {
-        font-family: 'Poppins', sans-serif;
         font-weight: 500;
     }
 
     /* Input Field Styling */
     .form-control {
-        font-family: 'Quicksand', sans-serif;
         font-size: 1rem;
     }
 
@@ -46,7 +47,6 @@
         border: none;
         padding: 12px;
         font-size: 1.2rem;
-        font-family: 'Lora', serif;
         transition: all 0.3s ease-in-out;
     }
 
@@ -62,7 +62,7 @@
 <div class="join-class-container">
     <div class="col-md-8">
         <div class="card">
-            <h2 class="text-center mb-4">Join a Classroom</h2>
+            <h2 class="text-center mb-4">Join Classroom</h2>
             <form method="POST">
                 <div class="mb-3">
                     <label class="form-label">Classroom Code</label>
